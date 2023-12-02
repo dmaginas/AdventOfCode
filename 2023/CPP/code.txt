@@ -1,0 +1,47 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+int calculateCalibrationSum(const std::string& filePath) {
+    std::ifstream inputFile(filePath);
+    if (!inputFile.is_open()) {
+        std::cerr << "Error opening file: " << filePath << std::endl;
+        return -1;
+    }
+
+    int sumOfCalibrations = 0;
+    std::string line;
+
+    while (std::getline(inputFile, line)) {
+        char firstDigit = '\0';
+        char lastDigit = '\0';
+
+        for (char ch : line) {
+            if (std::isdigit(ch)) {
+                if (firstDigit == '\0') {
+                    firstDigit = ch;
+                }
+                lastDigit = ch;
+            }
+        }
+
+        if (firstDigit != '\0' && lastDigit != '\0') {
+            int calibrationValue = (firstDigit - '0') * 10 + (lastDigit - '0');
+            sumOfCalibrations += calibrationValue;
+        }
+    }
+
+    inputFile.close();
+    return sumOfCalibrations;
+}
+
+int main() {
+    std::string filePath = "../input/input_day1.txt";
+    int result = calculateCalibrationSum(filePath);
+
+    if (result != -1) {
+        std::cout << "Sum of calibration values: " << result << std::endl;
+    }
+
+    return 0;
+}

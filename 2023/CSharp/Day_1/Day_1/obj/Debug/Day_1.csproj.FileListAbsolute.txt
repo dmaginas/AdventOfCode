@@ -1,0 +1,7 @@
+D:\Develop\Python\AdventOfCode\2023\CSharp\Day_1\Day_1\bin\Debug\Day_1.exe.config
+D:\Develop\Python\AdventOfCode\2023\CSharp\Day_1\Day_1\bin\Debug\Day_1.exe
+D:\Develop\Python\AdventOfCode\2023\CSharp\Day_1\Day_1\bin\Debug\Day_1.pdb
+D:\Develop\Python\AdventOfCode\2023\CSharp\Day_1\Day_1\obj\Debug\Day_1.csproj.AssemblyReference.cache
+D:\Develop\Python\AdventOfCode\2023\CSharp\Day_1\Day_1\obj\Debug\Day_1.csproj.CoreCompileInputs.cache
+D:\Develop\Python\AdventOfCode\2023\CSharp\Day_1\Day_1\obj\Debug\Day_1.exe
+D:\Develop\Python\AdventOfCode\2023\CSharp\Day_1\Day_1\obj\Debug\Day_1.pdb
