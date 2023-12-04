@@ -5,3 +5,11 @@ D:\Develop\Python\AdventOfCode\2023\CSharp\Day_1_2\Day_1_2\obj\Debug\Day_1_2.csp
 D:\Develop\Python\AdventOfCode\2023\CSharp\Day_1_2\Day_1_2\obj\Debug\Day_1_2.csproj.CoreCompileInputs.cache
 D:\Develop\Python\AdventOfCode\2023\CSharp\Day_1_2\Day_1_2\obj\Debug\Day_1_2.exe
 D:\Develop\Python\AdventOfCode\2023\CSharp\Day_1_2\Day_1_2\obj\Debug\Day_1_2.pdb
+C:\workspace\AdventOfCode\AdventOfCode\2023\CSharp\Day_1_2\Day_1_2\bin\Debug\Day_1_2.exe.config
+C:\workspace\AdventOfCode\AdventOfCode\2023\CSharp\Day_1_2\Day_1_2\bin\Debug\Day_1_2.exe
+C:\workspace\AdventOfCode\AdventOfCode\2023\CSharp\Day_1_2\Day_1_2\bin\Debug\Day_1_2.pdb
+C:\workspace\AdventOfCode\AdventOfCode\2023\CSharp\Day_1_2\Day_1_2\obj\Debug\Day_1_2.csproj.AssemblyReference.cache
+C:\workspace\AdventOfCode\AdventOfCode\2023\CSharp\Day_1_2\Day_1_2\obj\Debug\Day_1_2.csproj.SuggestedBindingRedirects.cache
+C:\workspace\AdventOfCode\AdventOfCode\2023\CSharp\Day_1_2\Day_1_2\obj\Debug\Day_1_2.csproj.CoreCompileInputs.cache
+C:\workspace\AdventOfCode\AdventOfCode\2023\CSharp\Day_1_2\Day_1_2\obj\Debug\Day_1_2.exe
+C:\workspace\AdventOfCode\AdventOfCode\2023\CSharp\Day_1_2\Day_1_2\obj\Debug\Day_1_2.pdb

@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 class Program
 {
+    static Dictionary<string, string> spelledOutDigits = new Dictionary<string, string>
+        {
+            {"one", "1"}, {"two", "2"}, {"three", "3"}, {"four", "4"},
+            {"five", "5"}, {"six", "6"}, {"seven", "7"}, {"eight", "8"}, {"nine", "9"}
+        };
+
     static void Main()
     {
-        string filePath = @"d:\Develop\Python\AdventOfCode\2023\input\input_day1.txt";
+        string filePath = @"c:\workspace\AdventOfCode\AdventOfCode\2023\input\input_day1.txt";
         int result = CalculateCalibrationSum(filePath);
 
         if (result != -1)
@@ -15,15 +23,84 @@ class Program
         }
     }
 
+    static string FindFirstDigit(string input)
+    {
+        string currentDigit = "";
+        string calibrationValue = "";
+
+        foreach (char ch in input)
+        {
+            if (char.IsLetter(ch))
+            {
+                currentDigit += ch;
+                try
+                {
+                    foreach (var key in spelledOutDigits.Keys)
+                        if (currentDigit.Contains(key))
+                            return spelledOutDigits[key];
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
+            else if (char.IsDigit(ch))
+            {
+                return ch.ToString();
+            }
+        }
+
+        return calibrationValue;
+    }
+
+    static string FindLastDigit(string input)
+    {
+        string currentDigit = "";
+        string calibrationValue = "";
+        
+        for (int i = input.Length - 1; i > 0; i--)
+        {
+            char ch = input[i];
+            if (char.IsLetter(ch))
+            {
+                currentDigit = ch + currentDigit;
+                try
+                {
+                    foreach (var key in spelledOutDigits.Keys)
+                        if (currentDigit.Contains(key))
+                                return spelledOutDigits[key];
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
+            else if (char.IsDigit(ch))
+            {
+                return ch.ToString();
+            }
+        }
+
+        return calibrationValue;
+    }
+
+    static int CountOccurrences(string input, string substring)
+    {
+        int count = 0;
+        int index = input.IndexOf(substring);
+
+        while (index != -1)
+        {
+            count++;
+            index = input.IndexOf(substring, index + 1);
+        }
+
+        return count;
+    }
+
     static int CalculateCalibrationSum(string filePath)
     {
-        Dictionary<string, string> spelledOutDigits = new Dictionary<string, string>
-        {
-            {"one", "1"}, {"two", "2"}, {"three", "3"}, {"four", "4"},
-            {"five", "5"}, {"six", "6"}, {"seven", "7"}, {"eight", "8"}, {"nine", "9"}
-        };
-
-        int sumOfCalibrations = 0;
+       int sumOfCalibrations = 0;
 
         try
         {
@@ -32,32 +109,24 @@ class Program
                 string line;
                 while ((line = sr.ReadLine()) != null)
                 {
-                    string currentDigit = "";
-                    string calibrationValue = "";
+                    string first = FindFirstDigit(line);
+                    string last = FindLastDigit(line);
 
-                    foreach (char ch in line)
+                    if (first == last)
                     {
-                        if (char.IsLetter(ch))
-                        {
-                            currentDigit += ch;
-                        }
-                        else if (char.IsDigit(ch))
-                        {
-                            if (spelledOutDigits.TryGetValue(currentDigit, out string mappedDigit))
-                            {
-                                calibrationValue += mappedDigit;
-                            }
-                            else
-                            {
-                                // Handle the case where currentDigit is not found in spelledOutDigits
-                                Console.WriteLine("Warning: Unrecognized spelled-out digit: " + currentDigit);
-                            }
-
-                            currentDigit = "";
-                            calibrationValue += ch;
-                        }
+                        // prüfen ob die Zahl nur einmal vorkommt
+                        int countNumber = CountOccurrences(line, first);
+                        var pair = spelledOutDigits.FirstOrDefault(x => x.Value == first);
+                        int countWord = CountOccurrences(line, pair.Key);
+                        int sum = countNumber + countWord;
+                        if (sum == 1)
+                            last = string.Empty;
                     }
 
+                    //string currentDigit = "";
+                    string calibrationValue = first + last;
+
+                    Trace.WriteLine($"{line} ===> {calibrationValue}");
                     if (!string.IsNullOrEmpty(calibrationValue))
                     {
                         int value = int.Parse(calibrationValue);
