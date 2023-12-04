@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 class Program
 {
@@ -23,65 +24,28 @@ class Program
         }
     }
 
-    static string FindFirstDigit(string input)
+    static (string, int) FindFirst(MatchCollection input)
     {
-        string currentDigit = "";
-        string calibrationValue = "";
-
-        foreach (char ch in input)
+        try
         {
-            if (char.IsLetter(ch))
-            {
-                currentDigit += ch;
-                try
-                {
-                    foreach (var key in spelledOutDigits.Keys)
-                        if (currentDigit.Contains(key))
-                            return spelledOutDigits[key];
-                }
-                catch (Exception)
-                {
-                    continue;
-                }
-            }
-            else if (char.IsDigit(ch))
-            {
-                return ch.ToString();
-            }
+            return (input[0].ToString(), 0);
         }
-
-        return calibrationValue;
+        catch (Exception)
+        {
+            return (null, -1);
+        }
     }
 
-    static string FindLastDigit(string input)
+    static (string, int) FindLast(MatchCollection input)
     {
-        string currentDigit = "";
-        string calibrationValue = "";
-        
-        for (int i = input.Length - 1; i > 0; i--)
+        try
         {
-            char ch = input[i];
-            if (char.IsLetter(ch))
-            {
-                currentDigit = ch + currentDigit;
-                try
-                {
-                    foreach (var key in spelledOutDigits.Keys)
-                        if (currentDigit.Contains(key))
-                                return spelledOutDigits[key];
-                }
-                catch (Exception)
-                {
-                    continue;
-                }
-            }
-            else if (char.IsDigit(ch))
-            {
-                return ch.ToString();
-            }
+            return (input[input.Count - 1].ToString(), input.Count - 1);
         }
-
-        return calibrationValue;
+        catch (Exception)
+        {
+            return (null, int.MaxValue);
+        }
     }
 
     static int CountOccurrences(string input, string substring)
@@ -109,21 +73,44 @@ class Program
                 string line;
                 while ((line = sr.ReadLine()) != null)
                 {
-                    string first = FindFirstDigit(line);
-                    string last = FindLastDigit(line);
+                    var digits = Regex.Matches(line, "\\d", RegexOptions.IgnoreCase);
 
-                    if (first == last)
+                    List<string> words = new List<string> { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+                    string pattern = string.Join("|", words.Select(w => Regex.Escape(w)));
+                    Regex regex = new Regex(pattern, RegexOptions.IgnoreCase);
+                    var woerter = regex.Matches(line);
+
+                    int idxFirstDigit = -1, idxLastDigit = -1, idxFirstWord = -1, idxLastWord = -1;
+                    string firstDigit = string.Empty, lastDigit = string.Empty, firstWord = string.Empty, lastWord = string.Empty;
+                    (firstDigit, idxFirstDigit) = FindFirst(digits);
+                    (lastDigit, idxLastDigit) = FindLast(digits);
+
+                    (firstWord, idxFirstWord) = FindFirst(woerter);
+                    (lastWord, idxLastWord) = FindLast(woerter);
+                    
+                    var min = Math.Min(idxFirstDigit, idxFirstWord);
+                    var max = Math.Max(idxLastDigit, idxLastWord);
+
+                    string first = string.Empty;
+                    string last = string.Empty;
+
+                    if (idxFirstDigit != -1 && min == idxFirstDigit) first = firstDigit;
+                    if (idxLastDigit != int.MaxValue && max == idxLastDigit) last = lastDigit;
+
+                    if (idxFirstWord != -1 && min == idxFirstWord)
                     {
-                        // prüfen ob die Zahl nur einmal vorkommt
-                        int countNumber = CountOccurrences(line, first);
-                        var pair = spelledOutDigits.FirstOrDefault(x => x.Value == first);
-                        int countWord = CountOccurrences(line, pair.Key);
-                        int sum = countNumber + countWord;
-                        if (sum == 1)
-                            last = string.Empty;
+                        spelledOutDigits.TryGetValue(firstWord, out string strFirstWord);
+                        if (!string.IsNullOrEmpty(strFirstWord))
+                            first = strFirstWord;
                     }
 
-                    //string currentDigit = "";
+                    if (idxLastWord != int.MaxValue && max == idxLastWord)
+                    {
+                        spelledOutDigits.TryGetValue(lastWord, out string strLastWord);
+                        if (!string.IsNullOrEmpty(strLastWord))
+                            last = strLastWord;
+                    }
+
                     string calibrationValue = first + last;
 
                     Trace.WriteLine($"{line} ===> {calibrationValue}");
@@ -139,7 +126,7 @@ class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error reading the file: " + e.Message);
+            Console.WriteLine("Error in CalculateCalibrationSum: " + e.Message);
             return -1;
         }
     }
