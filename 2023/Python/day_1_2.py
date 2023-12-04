@@ -1,3 +1,5 @@
+import itertools
+
 def calculate_calibration_sum(file_path):
     with open(file_path, 'r') as file:
         lines = file.readlines()
@@ -10,7 +12,8 @@ def calculate_calibration_sum(file_path):
     }
 
     for line in lines:
-        words = line.split()
+        words = list(itertools.chain.from_iterable(line))
+        #words = line.split()
         first_digit = None
         last_digit = None
 
@@ -19,11 +22,15 @@ def calculate_calibration_sum(file_path):
                 if first_digit is None:
                     first_digit = word
                 last_digit = word
-            elif word.lower() in spelled_out_digits:
-                spelled_out = spelled_out_digits[word.lower()]
-                if first_digit is None:
-                    first_digit = spelled_out
-                last_digit = spelled_out
+        
+        matches = [x for x in spelled_out_digits if x in line]
+        
+        if len(matches) > 0:
+            spelled_out = spelled_out_digits[matches[0].lower()]
+            first_digit = spelled_out
+        if len(matches) > 1:
+            spelled_out = spelled_out_digits[matches[-1].lower()]        
+            last_digit = spelled_out
 
         if first_digit is not None and last_digit is not None:
             calibration_value = int(first_digit + last_digit)
