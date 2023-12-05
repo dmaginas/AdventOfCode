@@ -1,4 +1,27 @@
 import itertools
+import re
+
+def find_first_and_last_occurrence(input_string):
+    # Definiere die Muster für Ziffern und Wörter
+    digit_pattern = re.compile(r'[1-9]')
+    word_pattern = re.compile(r'one|two|three|four|five|six|seven|eight|nine')
+
+    # Suche nach allen Übereinstimmungen im Eingabestring
+    all_matches = re.findall(digit_pattern, input_string) + [word_to_digit(match) for match in re.findall(word_pattern, input_string)]
+
+    if not all_matches:
+        return None, None
+
+    # Finde das erste und letzte Vorkommen
+    first_occurrence = all_matches[0]
+    last_occurrence = all_matches[-1]
+
+    return first_occurrence, last_occurrence
+
+def word_to_digit(word):
+    # Übersetze Wort in Ziffer
+    word_to_digit_mapping = {'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9'}
+    return word_to_digit_mapping.get(word, word)
 
 def calculate_calibration_sum(file_path):
     with open(file_path, 'r') as file:
@@ -12,29 +35,17 @@ def calculate_calibration_sum(file_path):
     }
 
     for line in lines:
-        words = list(itertools.chain.from_iterable(line))
-        #words = line.split()
-        first_digit = None
-        last_digit = None
-
-        for word in words:
-            if word.isdigit():
-                if first_digit is None:
-                    first_digit = word
-                last_digit = word
+        first, last = find_first_and_last_occurrence(line)
         
-        matches = [x for x in spelled_out_digits if x in line]
-        
-        if len(matches) > 0:
-            spelled_out = spelled_out_digits[matches[0].lower()]
-            first_digit = spelled_out
-        if len(matches) > 1:
-            spelled_out = spelled_out_digits[matches[-1].lower()]        
-            last_digit = spelled_out
+        if first is None:
+            first = ""
 
-        if first_digit is not None and last_digit is not None:
-            calibration_value = int(first_digit + last_digit)
-            sum_of_calibrations += calibration_value
+        if last is None:
+            last = ""
+
+        #if first is not None and last is not None:
+        calibration_value = int(first + last)
+        sum_of_calibrations += calibration_value
 
     return sum_of_calibrations
 
