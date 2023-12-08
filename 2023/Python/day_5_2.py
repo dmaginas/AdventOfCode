@@ -1,40 +1,40 @@
-def find_destination(mapping, source_num):
-    for dest_start, src_start, length in mapping:
-        if src_start <= source_num < src_start + length:
-            offset = source_num - src_start
-            return dest_start + offset
-    return source_num
+from bisect import bisect_left
+from tqdm import tqdm
 
-def process_seed(seed, mappings):
-    for mapping in mappings:
-        seed = find_destination(mapping, seed)
-    return seed
+def read_data(file_path):
+    with open(file_path, 'r') as file:
+        lines = file.read().strip().split('\n\n')
+    seeds = list(map(int, lines[0].split()[1:]))  # Flatten the list into start/end pairs
+    mappings = [[tuple(map(int, line.split())) for line in mapping.split('\n')[1:]] for mapping in lines[1:]]
+    return seeds, mappings
 
-# Read the input file and parse the maps
-with open('../input/input_day5.txt', 'r') as file:
-    lines = file.readlines()
+# Find a converted value for a given number and mapping
+def find_conversion(number, mapping):
+    for start_dst, start_src, length in mapping:
+        end_src = start_src + length
+        if start_src <= number < end_src:
+            return start_dst + (number - start_src)  # Convert the number using offset
+    return number  # No conversion, return the number itself
 
-# Extract and parse seed ranges
-initial_seeds = list(map(int, lines[0].strip().split(': ')[1].split()))
-seed_ranges = [(initial_seeds[i], initial_seeds[i+1]) for i in range(0, len(initial_seeds), 2)]
+# Find the lowest location number using all seeds and mappings
+def find_lowest_location(seeds):
+    global mappings
+    lowest_location = float('inf')
+    total_seeds = sum(seeds[1::2])  # Calculate total number of seeds to be processed
+    processed_seeds = 0
+    with tqdm(total=total_seeds) as pbar:
+        for i in range(0, len(seeds), 2):
+            for seed in range(seeds[i], seeds[i] + seeds[i + 1]):
+                location = seed
+                for mapping in mappings:
+                    location = find_conversion(location, mapping)
+                if location < lowest_location:
+                    lowest_location = location
+                processed_seeds += 1
+                pbar.update(1)
+    return lowest_location
 
-# Generate all seed numbers
-seeds = []
-for start, length in seed_ranges:
-    seeds.extend(range(start, start + length))
-
-# Parse mappings
-mappings = []
-for line in lines[1:]:
-    if "map:" in line:
-        mappings.append([])
-    else:
-        parts = list(map(int, line.strip().split()))
-        if parts:
-            mappings[-1].append(tuple(parts))
-
-# Find the lowest location number
-lowest_location = min(process_seed(seed, mappings) for seed in seeds)
-
-# Output the result
-print(f"The lowest location number is {lowest_location}")
+# Main execution
+seeds, mappings = read_data('../input/input_day5.txt')
+result = find_lowest_location(seeds)
+print(f"The lowest location number is {result}")
